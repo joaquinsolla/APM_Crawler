@@ -57,16 +57,17 @@ class CrawlerSpider(CrawlSpider):
 
                 if maps_url and maps_url.startswith("https://maps.google"):
 
-                    coords = extract_coordinates(maps_url)
-                    if coords is not None:
+                    latitude, longitude = extract_coordinates(maps_url)
+                    if latitude is not None and longitude is not None:
 
                         yield {
                             "id": self.id_counter,
                             "name": name,
                             "info": info,
                             "quantity": quantity,
-                            "maps_url": maps_url,
-                            "coords": coords
+                            "latitude": latitude,
+                            "longitude": longitude,
+                            "maps_url": maps_url
                         }
                         self.id_counter += 1
 
@@ -77,8 +78,8 @@ class CrawlerSpider(CrawlSpider):
 def extract_coordinates(url):
     match = re.search(r'll=(-?\d+\.\d+),(-?\d+\.\d+)', url)
     if match:
-        lat = match.group(1)
-        lon = match.group(2)
-        return f"{lat}, {lon}"
+        lat = float(match.group(1))
+        lon = float(match.group(2))
+        return lat, lon
     else:
-        return None
+        return None, None
