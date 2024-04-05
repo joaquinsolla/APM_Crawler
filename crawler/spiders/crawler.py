@@ -15,6 +15,8 @@ class CrawlerSpider(CrawlSpider):
         Rule(LinkExtractor(allow='/servicios/tramites/'), callback='parse_item', follow=True),
     ]
 
+    id_counter = 1
+
     def parse_item(self, response):
         try:
             parking_places = response.css('.mas_informacion ul li')
@@ -55,11 +57,13 @@ class CrawlerSpider(CrawlSpider):
 
                 if maps_url and maps_url.startswith("https://maps.google"):
                     yield {
+                        "id": self.id_counter,
                         "name": name,
                         "info": info,
                         "quantity": quantity,
                         "maps_url": maps_url
                     }
+                    self.id_counter += 1
 
         except Exception:
             pass
